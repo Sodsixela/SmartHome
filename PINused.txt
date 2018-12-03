@@ -1,0 +1,27 @@
+Bathroom:
+	LED = 2
+	SHOWER = 3
+Bedroom:
+	LED1 = 4
+	LED2 = 17
+	CURTAIN = 27
+Kitchen:
+	LED = 22
+	HOOD = 18
+	COOKER = 23
+	SINK = 16
+living room:
+	TV = 24
+	FAN = 25
+	LED = 20
+	TEMP = 13
+utility room:
+	LED = 10
+	MACHINE = 12
+outside:
+	LED = 9
+	ALARM = 11
+	DOOR = 26
+	MOVE = 
+		TRIG = 5
+		ECHO = 6
