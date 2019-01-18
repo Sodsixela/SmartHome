@@ -5,6 +5,7 @@ tv = ""
 fan = ""
 lightL = ""
 tempLimit = ""
+bayWindow = ""
 def temperature(object,client,labelT):
     path = "living_room"
     response = client.put(path, {"object": object})
@@ -14,7 +15,12 @@ def temperature(object,client,labelT):
 def living_room(object,client,button):
     path = "living_room"
     #object = raw_input("object: ")
-    if object == "tv":
+    if object == "bayWindow":
+        global bayWindow
+        bayWindow = not bayWindow
+        response = client.post(path, {"object": object, "state": str(bayWindow)})
+        button["fg"]=color(bayWindow)
+    elif object == "tv":
         global tv
         tv = not tv
         response = client.post(path, {"object": object, "state": str(tv)})

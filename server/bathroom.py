@@ -60,3 +60,6 @@ def useShower(state):
         print("Shower off")
         shower = False
     return True 
+
+def stop():
+    GPIO.cleanup()

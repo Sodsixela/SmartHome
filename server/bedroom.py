@@ -10,7 +10,6 @@ LED1 = 4
 lightR1 = False
 LED2 = 17
 lightR2 = False
-CURTAIN = 27
 curtain = False
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(LED1, GPIO.OUT)
@@ -35,8 +34,6 @@ class BedroomResources(Resource):
             res.payload = useLight1(str2bool(data["state"]))
         elif (data["object"] == "light2"):
             res.payload = useLight2(str2bool(data["state"]))
-        elif (data["object"] == "curtain"):
-            res.payload = useCurtain(str2bool(data["state"]))
         else:
             res.payload = False 
         return res
@@ -65,12 +62,6 @@ def useLight2(state):
         GPIO.output(LED2, GPIO.LOW)
         lightR2 = False
     return True
-def useCurtain(state):
-    global curtain
-    if state:
-        print("Curtain open")
-        curtain = True
-    else:
-        print("Curtain closed")
-        curtain = False
-    return True
+
+def stop():
+    GPIO.cleanup()

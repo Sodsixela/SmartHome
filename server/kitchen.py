@@ -96,3 +96,6 @@ def useSink(state):
         print("Sink off")
         sink = False
     return True
+
+def stop():
+    GPIO.cleanup()

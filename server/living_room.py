@@ -17,18 +17,22 @@ fanOn = False # if the user put it on, the server cannot use it itself
 LED = 20
 lightL = False
 TEMP = 13
+BAYWINDOW = 27
+bayWindow = False
 tempLimit = 25
 actTemp = 20 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(LED, GPIO.OUT)
 GPIO.output(LED, GPIO.LOW)
-
+GPIO.setup(BAYWINDOW, GPIO.OUT)
 #os.system('modprobe w1-gpio')
 #os.system('modprobe w1-therm')
 #base_dir = '/sys/bus/w1/devices/'
 #device_folder = glob.glob(base_dir + '28*')[0]
 #device_file = device_folder + '/w1_slave'
 
+p = GPIO.PWM(BAYWINDOW, 50)
+p.start(2.5) # initial position
 
 class LivingRoomResources(Resource):
     def __init__(self, name="LivingRoomResources", coap_server=None):
@@ -45,7 +49,11 @@ class LivingRoomResources(Resource):
         return self
     
     def render_POST(self, request):
-        data = ast.literal_eval(request.payload)
+        if type(request.payload) is str:
+            data_replace = request.payload.replace("'", "\"")
+            data = json.loads(data_replace)
+        elif type(request.payload) is dict:
+            data =ast.literal_eval(data_replace)
         res = LivingRoomResources()
         res.location_query = request.uri_query
         if(data["object"] == "light" ):
@@ -56,6 +64,8 @@ class LivingRoomResources(Resource):
             useTV(str2bool(data["state"]))
         elif (data["object"] == "temperature"):
             useTemperature(str2bool(data["state"]))
+        elif (data["object"] == "bayWindow"):
+            res.payload = useBayWindow(str2bool(data["state"]))
         return res
     
     def render_DELETE(self, request):
@@ -69,7 +79,7 @@ def read_temp_raw():
     return lines
 
 def read_temp():
-    lines = read_temp_raw()
+    #lines = read_temp_raw()
     while lines[0].strip()[-3:] != 'YES':
         time.sleep(0.2)
         lines = read_temp_raw()
@@ -90,17 +100,20 @@ def useTV(state):
         tv = False
     return True
 def useFan(state, temp = None):
-    global fan
+    global fan, fanOn
     if state:
         print("Fan on")
         fan = True
         if temp is None:
             fanOn = True
     else:
-        print("Fan off")
-        fan = False
         if temp is None:
+            print("Fan off")
+            fan = False
             fanOn = False
+        elif temp & fanOn is None:
+            print("Fan off")
+            fan = False
     return True
 def useLight(state):
     global lightL
@@ -114,8 +127,20 @@ def useLight(state):
         lightL = False
     return True
 
+def useBayWindow(state):
+    global bayWindow
+    if state:
+        print("bay window open")
+        p.ChangeDutyCycle(7.5)
+        bayWindow = True
+    else:
+        print("bay window closed")
+        p.ChangeDutyCycle(2.5)
+        bayWindow = False
+    return True
+
 def temperature():
-    global actTemp
+    global actTemp, fanOn, tempLimit
     while True:
         #actTemp = read_temp()[0]
         if actTemp >= tempLimit and not fanOn:
@@ -123,3 +148,7 @@ def temperature():
         elif fan and not fanOn:
             useFan(False,True)
         time.sleep(1)
+
+def stop():
+    p.stop()
+    GPIO.cleanup()

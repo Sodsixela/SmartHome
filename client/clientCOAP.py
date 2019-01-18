@@ -11,6 +11,7 @@ from Tkinter import *
 import json
 import ast
 import time
+import sys
 
 host = "127.0.0.1"
 port = 3005
@@ -23,11 +24,11 @@ bathroom.lightB = home['lightB']
 bathroom.shower = home['shower']
 bedroom.lightR1 = home['lightR1']
 bedroom.lightR2 = home['lightR2']
-bedroom.curtain = home['curtain']
 kitchen.lightK = home['lightK']
 kitchen.hood = home['hood']
 kitchen.cooker = home['cooker']
 kitchen.sink = home['sink']
+living_room.bayWindow = home['bayWindow']
 living_room.tv = home['tv']
 living_room.fan = home['fan']
 living_room.lightL = home['lightL']
@@ -42,76 +43,97 @@ labelTAct = ""
 
 def GUI():
     fenetre = Tk()
-
+    filename = PhotoImage(file = "SmartHome3D.png")
+    C = Canvas(fenetre, height =400, width = 1000)
+    background_label = Label(fenetre, image = filename)
+    background_label.place(x=30,y=0, width = 600, height = 400)
+    
     label = Label(fenetre, text="Smart Home")
     label.pack()
-    buttonLL = Button(fenetre, text="living_room light", fg=color(living_room.lightL), command= lambda: living_room.living_room("lightL",client,buttonLL))
+    label.place(x = 10, y = 20)
+    buttonLL = Button(fenetre, text="light", fg=color(living_room.lightL), command= lambda: living_room.living_room("lightL",client,buttonLL))
     buttonLL.pack()
-    buttonLF = Button(fenetre, text="living_room fan", fg=color(living_room.fan),command= lambda: living_room.living_room("fan",client,buttonLF))
+    buttonLL.place(x = 10, y = 130)
+    buttonLF = Button(fenetre, text="fan", fg=color(living_room.fan),command= lambda: living_room.living_room("fan",client,buttonLF))
     buttonLF.pack()
-    buttonLT = Button(fenetre, text="living_room tv", fg=color(living_room.tv),command= lambda: living_room.living_room("tv",client,buttonLT))
+    buttonLF.place(x = 10, y = 250)
+    buttonLT = Button(fenetre, text="tv", fg=color(living_room.tv),command= lambda: living_room.living_room("tv",client,buttonLT))
     buttonLT.pack()
-    buttonKL = Button(fenetre, text="kitchen light", fg=color(kitchen.lightK), command= lambda: kitchen.kitchen("lightK",client,buttonKL))
+    buttonLT.place(x = 10, y = 290)
+    buttonLB = Button(fenetre, text="bayWindow", fg=color(living_room.bayWindow),command= lambda: living_room.living_room("bayWindow",client,buttonLB))
+    buttonLB.pack()
+    buttonLB.place(x = 10, y = 100)
+    buttonKL = Button(fenetre, text="light", fg=color(kitchen.lightK), command= lambda: kitchen.kitchen("lightK",client,buttonKL))
     buttonKL.pack()
-    buttonKH = Button(fenetre, text="kitchen hood", fg=color(kitchen.hood),command= lambda: kitchen.kitchen("hood",client,buttonKH))
+    buttonKL.place(x = 150, y = 55)
+    buttonKH = Button(fenetre, text="hood", fg=color(kitchen.hood),command= lambda: kitchen.kitchen("hood",client,buttonKH))
     buttonKH.pack()
-    buttonKC = Button(fenetre, text="kitchen cooker", fg=color(kitchen.cooker),command= lambda: kitchen.kitchen("cooker",client,buttonKC,buttonKH))
+    buttonKH.place(x = 250, y = 55)
+    buttonKC = Button(fenetre, text="cooker", fg=color(kitchen.cooker),command= lambda: kitchen.kitchen("cooker",client,buttonKC,buttonKH))
     buttonKC.pack()
-    buttonKS = Button(fenetre, text="kitchen sink", fg=color(kitchen.sink),command= lambda: kitchen.kitchen("sink",client,buttonKS))
+    buttonKC.place(x = 250, y = 95)
+    buttonKS = Button(fenetre, text="sink", fg=color(kitchen.sink),command= lambda: kitchen.kitchen("sink",client,buttonKS))
     buttonKS.pack()
-    buttonBR1 = Button(fenetre, text="bedroom light1", fg=color(bedroom.lightR1),command= lambda: bedroom.bedroom("lightR1",client,buttonBR1))
+    buttonKS.place(x = 150, y = 95)
+    buttonBR1 = Button(fenetre, text="light1", fg=color(bedroom.lightR1),command= lambda: bedroom.bedroom("lightR1",client,buttonBR1))
     buttonBR1.pack()
-    buttonBR2 = Button(fenetre, text="bedroom light2", fg=color(bedroom.lightR2),command= lambda: bedroom.bedroom("lightR2",client,buttonBR2))
+    buttonBR1.place(x = 560, y = 150)
+    buttonBR2 = Button(fenetre, text="light2", fg=color(bedroom.lightR2),command= lambda: bedroom.bedroom("lightR2",client,buttonBR2))
     buttonBR2.pack()
-    buttonBC = Button(fenetre, text="bedroom curtain", fg=color(bedroom.curtain),command= lambda: bedroom.bedroom("curtain",client,buttonODBC))
-    buttonBC.pack()
-    buttonBaL = Button(fenetre, text="bathroom light", fg=color(bathroom.lightB),command= lambda: bathroom.bathroom("lightB",client,buttonBaL))
+    buttonBR2.place(x = 560, y = 270)
+    buttonBaL = Button(fenetre, text="light", fg=color(bathroom.lightB),command= lambda: bathroom.bathroom("lightB",client,buttonBaL))
     buttonBaL.pack()
-    buttonBaS = Button(fenetre, text="bathroom shower", fg=color(bathroom.shower),command= lambda: bathroom.bathroom("shower",client,buttonBaS))
+    buttonBaL.place(x = 370, y = 55)
+    buttonBaS = Button(fenetre, text="shower", fg=color(bathroom.shower),command= lambda: bathroom.bathroom("shower",client,buttonBaS))
     buttonBaS.pack()
-    buttonUL = Button(fenetre, text="utility_room light", fg=color(utility_room.lightU),command= lambda: utility_room.utility_room("lightU",client,buttonUL))
+    buttonBaS.place(x = 370, y = 95)
+    buttonUL = Button(fenetre, text="light", fg=color(utility_room.lightU),command= lambda: utility_room.utility_room("lightU",client,buttonUL))
     buttonUL.pack()
-    buttonUM = Button(fenetre, text="utility_room machine", fg=color(utility_room.machine),command= lambda: utility_room.utility_room("machine",client,buttonUM))
+    buttonUL.place(x = 340, y = 340)
+    buttonUM = Button(fenetre, text="machine", fg=color(utility_room.machine),command= lambda: utility_room.utility_room("machine",client,buttonUM))
     buttonUM.pack()
-    buttonOL = Button(fenetre, text="outside light", fg=color(outside.lightO),command= lambda: outside.outside("lightO",client,buttonOL))
+    buttonUM.place(x = 340, y = 370)
+    buttonOL = Button(fenetre, text="light", fg=color(outside.lightO),command= lambda: outside.outside("lightO",client,buttonOL))
     buttonOL.pack()
-    buttonOI = Button(fenetre, text="outside lock", fg=color(outside.lock),command= lambda: outside.outside("lock",client,buttonOI))
+    buttonOL.place(x = 160, y = 340)
+    buttonOI = Button(fenetre, text="lock", fg=color(outside.lock),command= lambda: outside.outside("lock",client,buttonOI))
     buttonOI.pack()
-    buttonOD = Button(fenetre, text="outside door", fg=color(outside.door),command= lambda: outside.outside("door",client,buttonOD))
+    buttonOI.place(x = 240, y = 340)
+    buttonOD = Button(fenetre, text="door", fg=color(outside.door),command= lambda: outside.outside("door",client,buttonOD))
     buttonOD.pack()
-
+    buttonOD.place(x = 240, y = 370)
+    C.pack()
     labelT= Label(fenetre, text="Set temperature: (Actual "+str(living_room.tempLimit)+")")
     labelT.pack()
+    labelT.place(x = 10, y = 400)
     setTemp = Entry(fenetre)
     setTemp.pack()
+    setTemp.place(x = 10, y = 430)
     buttonT = Button(fenetre, text="Submit",command= lambda: living_room.temperature(setTemp.get(),client,labelT))
     buttonT.pack()
+    buttonT.place(x = 10, y = 460)
     global labelTAct
     labelTAct= Label(fenetre, text="temperature: ")
     labelTAct.pack()
+    labelTAct.place(x = 10, y = 490)
     fenetre.mainloop()
     
 def temp():
     global labelTAct
-    try:
-        while True:
-            time.sleep(5)
-            labelTAct["text"] = "temperature: "+str(client.get("living_room").payload)
-    except KeyboardInterrupt:
-        client.stop()
+    while True:
+        time.sleep(5)
+        labelTAct["text"] = "temperature: "+str(client.get("living_room").payload)
 if __name__ == "__main__":
-    threads = []
     try:
-        for func in [GUI,temp]:
-           threads.append(Thread(target=func))
-           threads[-1].start()
-
-        for thread in threads:
-           """
-           Waits for threads to complete before moving on with the main
-           script.
-           """
-           thread.join()
-    except:
-        for thread in threads:
-            thread.stop()
+        t_gui = Thread(target=GUI)
+        t_gui.daemon= True
+        t_gui.start()
+        t_temp= Thread(target=temp)
+        t_temp.daemon= True
+        t_temp.start()
+        while True:
+            time.sleep(1)
+    except (KeyboardInterrupt,SystemExit):
+        print "Exiting..."
+        client.stop()
+        sys.exit()

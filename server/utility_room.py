@@ -57,3 +57,6 @@ def useMachine(state):
         print("Machine off")
         machine = False
     return True
+
+def stop():
+    GPIO.cleanup()

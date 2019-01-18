@@ -28,7 +28,7 @@ GPIO.setup(ECHO,GPIO.IN)
 GPIO.output(TRIG, False)
 
 p = GPIO.PWM(DOOR, 50)
-p.start(2.5) # initial position
+p.start(7.5) # initial position
 
 try:
     class OutsideResources(Resource):
@@ -79,18 +79,19 @@ try:
             alarm = False
 
     def useDoor(state, sensor = None):
+        global doorOpen
         if isOpen & state:
             print("door opened")
-            p.ChangeDutyCycle(7.5)
+            p.ChangeDutyCycle(3)
             door = True
-            if senor is None : #disable the server to use the door itself
+            if sensor is None : #disable the server to use the door itself
                 doorOpen = True
         else:
             print("door closed")
-            p.ChangeDutyCycle(2.5)
+            p.ChangeDutyCycle(7.5)
             door = False
-            if senor is None :
-                doorOpen = True
+            if sensor is None :
+                doorOpen = False
         return True
 
     def lock(state):
@@ -115,15 +116,18 @@ try:
             move = pulse_duration * 17150
             move = round(move, 2)
             if isOpen == True:
-                if move <= 10 and not doorOpen:
+                if move <= 5 and not doorOpen:
                     useDoor(True,True)
-                elif not doorOpen:
+                elif not doorOpen and move > 5:
                     useDoor(False,True)
             else:
-                if move <= 10 :
+                if move <= 5 :
                     useAlarm(True)
                 else:
                     useAlarm(False)
+    def stop():
+        p.stop()
+        GPIO.cleanup()
 except KeyboardInterrupt:                
-    g.stop()
+    p.stop()
     GPIO.cleanup()
