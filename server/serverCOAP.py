@@ -4,7 +4,7 @@ from coapthon.resources.resource import Resource
 import kitchen
 from kitchen import KitchenResources
 import living_room
-from living_room import LivingRoomResources,temperature
+from living_room import LivingRoomResources,temperature,bayState
 import bathroom
 from bathroom import BathroomResources
 import bedroom
@@ -74,6 +74,10 @@ if __name__ == '__main__':
         t_outsideDoor = Thread(target=doorState)
         t_outsideDoor.daemon = True
         t_outsideDoor.start()
+
+        t_bay = Thread(target=bayState)
+        t_bay.daemon = True
+        t_bay.start()
         
         t_main = Thread(target=main)
         t_main.daemon= True

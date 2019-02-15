@@ -134,12 +134,10 @@ def useBayWindow(state):
     global bayWindow
     if state:
         print("bay window open")
-        p.ChangeDutyCycle(2.5)
-        bayWindow = True
+        bayWindow = 2.5
     else:
         print("bay window closed")
-        p.ChangeDutyCycle(7.5)
-        bayWindow = False
+        bayWindow = 7.5
     return True
 
 def temperature():
@@ -151,7 +149,10 @@ def temperature():
         elif fan and not fanOn:
             useFan(False,True)
         time.sleep(1)
-
+def bayState()
+    global bayWindow
+    while True:
+        p.ChangeDutyCycle(bayWindow)
 def stop():
     p.stop()
     GPIO.cleanup()
