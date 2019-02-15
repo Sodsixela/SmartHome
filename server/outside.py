@@ -17,6 +17,7 @@ TRIG = 5
 ECHO = 6
 isOpen = False #locked or unlocked
 doorOpen = False #open by the user?
+doorOpening = 7.5 #openend angle of the door, for VR
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(LED, GPIO.OUT)
 GPIO.output(LED, GPIO.LOW)
@@ -28,7 +29,7 @@ GPIO.setup(ECHO,GPIO.IN)
 GPIO.output(TRIG, False)
 
 p = GPIO.PWM(DOOR, 50)
-p.start(7.5) # initial position
+p.start(doorOpening) # initial position
 
 try:
     class OutsideResources(Resource):
@@ -47,7 +48,16 @@ try:
             if(data["object"] == "light" ):
                 res.payload = useLight(str2bool(data["state"]))
             elif (data["object"] == "door"):
-                res.payload = useDoor(str2bool(data["state"]))
+                angle = 2.5
+                try:
+                    angle = int(data["state"])
+                except ValueError:
+                    angle = str2bool(data["state"]
+                    if angle: #open
+                        angle = 3.5
+                    else:   #close
+                        angle = 7.5
+                res.payload = useDoor(angle)
             elif (data["object"] == "lock"):
                 res.payload = lock(str2bool(data["state"]))
             else:
@@ -79,16 +89,18 @@ try:
             alarm = False
 
     def useDoor(state, sensor = None):
+        global doorOpening
         global doorOpen
-        if isOpen & state:
+        if isOpen & state != 7.5: #if the door is unlocked and we ask to open it
             print("door opened")
-            p.ChangeDutyCycle(3)
+            if state > 0 & state <=90: #we do not accept weird and too large value
+                doorOpening = (state*5)/90 + 2.5
             door = True
             if sensor is None : #disable the server to use the door itself
                 doorOpen = True
-        else:
+        else:#if we ask to close it
             print("door closed")
-            p.ChangeDutyCycle(7.5)
+            doorOpening = 2.5
             door = False
             if sensor is None :
                 doorOpen = False
@@ -117,14 +129,19 @@ try:
             move = round(move, 2)
             if isOpen == True:
                 if move <= 5 and not doorOpen:
-                    useDoor(True,True)
+                    useDoor(2.5,True)
                 elif not doorOpen and move > 5:
-                    useDoor(False,True)
+                    useDoor(7.5,True)
             else:
                 if move <= 5 :
                     useAlarm(True)
                 else:
                     useAlarm(False)
+    def doorState()
+        global doorOpening
+        while True:
+            p.ChangeDutyCycle(doorOpening)
+        
     def stop():
         p.stop()
         GPIO.cleanup()

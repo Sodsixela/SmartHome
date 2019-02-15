@@ -32,7 +32,7 @@ GPIO.setup(BAYWINDOW, GPIO.OUT)
 #device_file = device_folder + '/w1_slave'
 
 p = GPIO.PWM(BAYWINDOW, 50)
-p.start(2.5) # initial position
+p.start(7.5) # initial position
 
 class LivingRoomResources(Resource):
     def __init__(self, name="LivingRoomResources", coap_server=None):
@@ -104,6 +104,7 @@ def useFan(state, temp = None):
     if state:
         print("Fan on")
         fan = True
+        GPIO.output(FAN, GPIO.HIGH)
         if temp is None:
             fanOn = True
     else:
@@ -111,9 +112,11 @@ def useFan(state, temp = None):
             print("Fan off")
             fan = False
             fanOn = False
+            GPIO.output(FAN, GPIO.LOW)
         elif temp & fanOn is None:
             print("Fan off")
             fan = False
+            GPIO.output(FAN, GPIO.LOW)
     return True
 def useLight(state):
     global lightL
@@ -131,11 +134,11 @@ def useBayWindow(state):
     global bayWindow
     if state:
         print("bay window open")
-        p.ChangeDutyCycle(7.5)
+        p.ChangeDutyCycle(2.5)
         bayWindow = True
     else:
         print("bay window closed")
-        p.ChangeDutyCycle(2.5)
+        p.ChangeDutyCycle(7.5)
         bayWindow = False
     return True
 

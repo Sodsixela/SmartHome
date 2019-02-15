@@ -12,7 +12,7 @@ from bedroom import BedroomResources
 import utility_room
 from utility_room import UtilityRoomResources
 import outside
-from outside import OutsideResources,moving
+from outside import OutsideResources,moving,doorState
 import time
 import sys
 
@@ -66,9 +66,15 @@ if __name__ == '__main__':
         t_moving = Thread(target=moving)
         t_moving.daemon= True
         t_moving.start()
+        
         t_temperature = Thread(target=temperature)
         t_temperature.daemon= True
         t_temperature.start()
+
+        t_outsideDoor = Thread(target=doorState)
+        t_outsideDoor.daemon = True
+        t_outsideDoor.start()
+        
         t_main = Thread(target=main)
         t_main.daemon= True
         t_main.start()
