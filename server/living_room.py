@@ -24,6 +24,9 @@ actTemp = 20
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(LED, GPIO.OUT)
 GPIO.output(LED, GPIO.LOW)
+
+GPIO.setup(FAN, GPIO.OUT)
+GPIO.output(FAN, GPIO.LOW)
 GPIO.setup(BAYWINDOW, GPIO.OUT)
 #os.system('modprobe w1-gpio')
 #os.system('modprobe w1-therm')

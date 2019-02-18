@@ -8,12 +8,13 @@ import ast
 
 LED = 2
 lightB = False
-SHOWER = 3
+BATH = 3
 shower = False
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(LED, GPIO.OUT)
 GPIO.output(LED, GPIO.LOW)
-
+GPIO.setup(BATH, GPIO.OUT)
+GPIO.output(BATH, GPIO.LOW)
 class BathroomResources(Resource):
     def __init__(self, name="BathroomResources", coap_server=None):
         super(BathroomResources, self).__init__(name, coap_server,visible=True,observable=True,allow_children=True)
@@ -55,9 +56,11 @@ def useShower(state):
     global shower
     if state:
         print("Shower on")
+        GPIO.output(BATH, GPIO.HIGH)
         shower = True
     else:
         print("Shower off")
+        GPIO.output(BATH, GPIO.LOW)
         shower = False
     return True 
 
